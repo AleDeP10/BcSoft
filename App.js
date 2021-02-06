@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,12 +12,15 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
+
+import GenericDialog from './GenericDialog';
 import InputPanel from './InputPanel';
 import HotelsPanel from './HotelsPanel';
 import DetailsPanel from './DetailsPanel';
-import {submitRequest, pad, shallowClone} from './commons';
+import { submitRequest, pad } from './commons';
 import styles from './styles';
 
 
@@ -66,68 +70,73 @@ const App = () => {
     sectionsVisibility, setSectionsVisibility
   ] = useState({});
 
+  const [
+    dataError, setDataError
+] = useState('');
+
   const changeStep = (increment) => {
-    if (step==1 && increment==1) {
+    if (step == 1 && increment == 1) {
       if (selectedCity == null) {
-        alert('Choose a destination city first');
+        setDataError('Choose a destination city first');
         return;
       }
       else {
         searchHotels();
       }
     }
-    if (step==2 && increment==1) {
+    if (step == 2 && increment == 1) {
       if (selectedCity == null) {
-        alert('Choose an hotel first');
+        setDataError('Choose an hotel first');
         return;
       }
       else {
         searchHotelDetails();
       }
     }
-    setStep(step+increment);
+    setStep(step + increment);
   };
 
-  const searchHotels = () => {    
+  const searchHotels = () => {
     submitRequest('properties/list?' + 'destinationId=' + selectedCity.value +
-      '&checkIn=' + checkIn.getFullYear() + '-' + pad(checkIn.getMonth()+1,2) + '-' + pad(checkIn.getDay(),2) +
-      '&checkOut=' + checkOut.getFullYear() + '-' + pad(checkOut.getMonth()+1,2) + '-' + pad(checkOut.getDay(),2) +
-      '&adults1=' + guests1 + 
-      (guests2>0 ? '&adults2=' + guests2 : '') + 
-      (guests3>0 ? '&adults3=' + guests3 : '') + 
-      '&pageNumber=1&pageSize=25', 
+      '&checkIn=' + checkIn.getFullYear() + '-' + pad(checkIn.getMonth() + 1, 2) + '-' + pad(checkIn.getDay(), 2) +
+      '&checkOut=' + checkOut.getFullYear() + '-' + pad(checkOut.getMonth() + 1, 2) + '-' + pad(checkOut.getDay(), 2) +
+      '&adults1=' + guests1 +
+      (guests2 > 0 ? '&adults2=' + guests2 : '') +
+      (guests3 > 0 ? '&adults3=' + guests3 : '') +
+      '&pageNumber=1&pageSize=25',
       (response) => setHotels(response.data.body.searchResults.results));
   };
 
-  const searchHotelDetails = () => {    
+  const searchHotelDetails = () => {
     setHotelDetails(null);
     submitRequest('properties/get-details?' + 'id=' + selectedHotel.id +
-      '&checkIn=' + checkIn.getFullYear() + '-' + pad(checkIn.getMonth()+1,2) + '-' + pad(checkIn.getDay(),2) +
-      '&checkOut=' + checkOut.getFullYear() + '-' + pad(checkOut.getMonth()+1,2) + '-' + pad(checkOut.getDay(),2) +
-      '&adults1=' + guests1 + 
-      (guests2>0 ? '&adults2=' + guests2 : '') + 
-      (guests3>0 ? '&adults3=' + guests3 : ''), 
+      '&checkIn=' + checkIn.getFullYear() + '-' + pad(checkIn.getMonth() + 1, 2) + '-' + pad(checkIn.getDay(), 2) +
+      '&checkOut=' + checkOut.getFullYear() + '-' + pad(checkOut.getMonth() + 1, 2) + '-' + pad(checkOut.getDay(), 2) +
+      '&adults1=' + guests1 +
+      (guests2 > 0 ? '&adults2=' + guests2 : '') +
+      (guests3 > 0 ? '&adults3=' + guests3 : ''),
       displayHotelDetails);
   };
 
   const displayHotelDetails = (response) => {
     const details = response.data.body;
     const landmarks = [];
-    console.log('\in the hotel: '+JSON.stringify(details.amenities[0]));
-    selectedHotel.landmarks.map((landmark) => landmarks.push(landmark.label+': '+landmark.distance));
-    details.amenities[0].listItems.splice(0, 0, {heading: 'Landmarks', listItems: landmarks});
+    console.log('\in the hotel: ' + JSON.stringify(details.amenities[0]));
+    selectedHotel.landmarks.map((landmark) => landmarks.push(landmark.label + ': ' + landmark.distance));
+    details.amenities[0].listItems.splice(0, 0, { heading: 'Landmarks', listItems: landmarks });
     setHotelDetails(details);
     console.log('loading visibilities from: ' + JSON.stringify(hotelDetails));
     let visibility = {};
-    details.amenities.map((container)=>{
+    details.amenities.map((container) => {
       container.listItems.map((section) => {
         visibility[section.heading] = false;
       });
     });
     setSectionsVisibility(visibility);
-    console.log('\nhotel details: '+JSON.stringify(hotelDetails));
-    console.log('\nvisibility: '+JSON.stringify(visibility));
+    console.log('\nhotel details: ' + JSON.stringify(hotelDetails));
+    console.log('\nvisibility: ' + JSON.stringify(visibility));
   };
+
   return (
     <>
       <StatusBar barStyle='dark-content' />
@@ -145,12 +154,12 @@ const App = () => {
           />
           <HotelsPanel
             step={step}
-            selectedCity={selectedCity} hotels={hotels} 
+            selectedCity={selectedCity} hotels={hotels}
             selectedHotel={selectedHotel} setSelectedHotel={setSelectedHotel}
             changeStep={changeStep}
           />
-          <DetailsPanel 
-            step={step} 
+          <DetailsPanel
+            step={step}
             selectedHotel={selectedHotel} hotelDetails={hotelDetails}
             sectionsVisibility={sectionsVisibility} setSectionsVisibility={setSectionsVisibility}
           />
@@ -185,6 +194,16 @@ const App = () => {
             </ScrollView>
           </TouchableHighlight>
         </View>
+
+        {/* Error alert dialog */}
+        <GenericDialog
+          title='Error'
+          showDialog={dataError != ''}
+          onOk={() => setDataError('')}
+        >
+          <Text>{dataError}</Text>
+          <></>
+        </GenericDialog>
       </View>
     </>
   );
