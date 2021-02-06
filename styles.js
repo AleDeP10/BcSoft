@@ -38,12 +38,7 @@ export default styles = StyleSheet.create({
       backgroundColor: '#7D78A9',
       minWidth: '100%'
     },
-    label: {
-      marginVertical: 8,
-      fontSize: 14,
-      fontWeight: '400',
-      color: '#CAC8E0',
-    },
+
     footer: {
       color: '#5A548E',
       fontSize: 12,
@@ -55,8 +50,8 @@ export default styles = StyleSheet.create({
   
     row: {
       flexDirection: 'row',
+      alignContent: 'center',
       paddingBottom: 10,
-      alignContent: 'center'
     },
     left: {
       minWidth: 120
@@ -64,10 +59,17 @@ export default styles = StyleSheet.create({
     right: {
       minWidth: '100%'
     },
+    label: {
+        marginVertical: 8,
+        fontSize: 14,
+        fontWeight: '400',
+        color: '#CAC8E0',
+      },
     input: {
       borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: '#ffffff',
       borderColor: '#00509E',
+      color: '#39739d'
     },
   
     listbox: {

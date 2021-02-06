@@ -81,6 +81,7 @@ const App = () => {
         return;
       }
       else {
+        setHotels([]);
         searchHotels();
       }
     }
@@ -90,6 +91,7 @@ const App = () => {
         return;
       }
       else {
+        setHotelDetails(null);
         searchHotelDetails();
       }
     }
@@ -168,7 +170,7 @@ const App = () => {
         {/* Navigation Buttons */}
         <View style={{ flexDirection: 'row', alignItems: 'center', height: 70 }}>
           <TouchableHighlight
-            style={styles.imageButtonStyle}
+            style={[styles.imageButtonStyle, {backgroundColor: step <= 1 ? '#ccccb3' : '#0069cc'}]}
             onPress={() => changeStep(-1)}
             disabled={step <= 1}
           >
@@ -177,16 +179,16 @@ const App = () => {
                 source={require('./img/back.png')}
                 style={styles.imageIconStyle}
               />
-              <Text style={{ color: step <= 1 ? '#ccccb3' : '#ffffff' }}> Back</Text>
+              <Text style={{ color: step <= 1 ? '#4A4A2C' : '#ffffff' }}> Back</Text>
             </ScrollView>
           </TouchableHighlight>
           <TouchableHighlight
-            style={styles.imageButtonStyle}
+            style={[styles.imageButtonStyle, {backgroundColor: step >= 3 ? '#ccccb3' : '#0069cc'}]}
             onPress={() => changeStep(+1)}
             disabled={step >= 3}
           >
             <ScrollView horizontal>
-              <Text style={{ color: step >= 3 ? '#ccccb3' : '#ffffff' }}>Next </Text>
+              <Text style={{ color: step >= 3 ? '#4A4A2C' : '#ffffff' }}>Next </Text>
               <Image
                 source={require('./img/next.png')}
                 style={styles.imageIconStyle}

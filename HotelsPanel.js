@@ -72,7 +72,7 @@ const HotelsPanel = (props) => {
 
     const handlePress = (hotel) => {
         props.setSelectedHotel(hotel);
-        props.changeStep(1);
+        //props.changeStep(1);
     };
 
     return (

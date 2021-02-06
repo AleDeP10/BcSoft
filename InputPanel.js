@@ -4,6 +4,8 @@ import {
     View,
     Text,
     TextInput,
+    Image,
+    TouchableHighlight
 } from 'react-native';
 
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -32,7 +34,7 @@ const InputPanel = (props) => {
 
     const searchLocality = (value) => {
         let encLocality = encodeURIComponent(value);
-        console.log(encLocality);
+        props.setSelectedCity(null);
         if (encLocality != '') {
             submitRequest('locations/search?query=' + encLocality, displayLocalities);
         }
@@ -64,6 +66,7 @@ const InputPanel = (props) => {
                         defaultValue={props.selectedCity != null ? props.selectedCity.value : null}
                         containerStyle={{ height: 40 }}
                         style={{ backgroundColor: '#ffffff' }}
+                        selectedLabelStyle={{ color: '#39739d' }}
                         itemStyle={{ justifyContent: 'flex-start' }}
                         dropDownStyle={{ backgroundColor: '#ffffff' }}
                         onChangeItem={item => props.setSelectedCity(item)}
@@ -90,6 +93,8 @@ const InputPanel = (props) => {
         props.step == 1 ?
             <ScrollView>
                 <Text style={styles.h2}>Travel details</Text>
+
+                {/* Final destination selection into a dropdown */}
                 <View style={styles.row}>
                     <Text style={[styles.left, styles.label]}>
                         Destination
@@ -105,30 +110,28 @@ const InputPanel = (props) => {
                         {renderCityDropDown()}
                     </View>
                 </View>
+
+                {/* CheckIn and checkOut dates loaded from a GenericDialog */}
                 <View style={styles.row}>
                     <Text style={[styles.left, styles.label]}>
                         ChekIn Date
                     </Text>
-                    <DatePicker
-                        style={{ maxWidth: 220 }}
-                        date={props.checkIn}
-                        mode="date"
-                        locale="en"
-                        onDateChange={(date) => props.setCheckIn(date)}
+                    <DateInput 
+                        targetDate={props.checkIn}
+                        setTargetDate={props.setCheckIn}
                     />
                 </View>
                 <View style={styles.row}>
                     <Text style={[styles.left, styles.label]}>
                         CheckOut Date
                     </Text>
-                    <DatePicker
-                        style={{ maxWidth: 220 }}
-                        date={props.checkOut}
-                        mode="date"
-                        locale="en"
-                        onDateChange={(date) => props.setCheckOut(date)}
+                    <DateInput 
+                        targetDate={props.checkOut}
+                        setTargetDate={props.setCheckOut}
                     />
                 </View>
+
+                {/* Guests for each room (adults) */}
                 <View style={styles.row}>
                     <Text style={[styles.left, styles.label]}>
                         Guests 1st room
@@ -159,6 +162,8 @@ const InputPanel = (props) => {
                         onChangeText={value => setGuests3Str(value)}
                         onSubmitEditing={(event) => setIntProperty(event.nativeEvent.text, props.guests3, props.setGuests3, setGuests3Str)} />
                 </View>
+
+                {/* Error alert dialog  */}
                 <GenericDialog
                     title='Error'
                     showDialog={inputError != ''}
@@ -168,9 +173,52 @@ const InputPanel = (props) => {
                     <></>
                 </GenericDialog>
             </ScrollView>
-            :
+        :
             <></>
     )
+};
+
+{/* Date picker separated into a GenericDialog */}
+const DateInput = (props) => {
+    const [
+        date, setDate
+    ] = useState(props.targetDate);
+    const [
+        showDialog, setShowDialog
+    ] = useState(false);
+    return (
+        <>
+            <View style={{ flexDirection: 'row', alignContent: 'center' }}>
+                <TextInput 
+                    style={[styles.input, { width: 220, height: 40 }]}
+                    value={date.toDateString()}
+                    editable={false}
+                />
+                <TouchableHighlight onPress={() => setShowDialog(true)}>
+                    <Image
+                        source={require('./img/date-time.png')}
+                        style={{ width: 30, height: 30, marginLeft: 10 }}
+                    />
+                </TouchableHighlight>
+            </View>
+            <GenericDialog
+                title='Choose a date'
+                showDialog={showDialog}
+                showCancel={true}
+                onOk={() => {props.setTargetDate(date);setShowDialog(false);}}
+                onCancel={() => setShowDialog(false)}
+            >
+                <DatePicker
+                    style={{ maxWidth: 280 }}
+                    date={date}
+                    mode="date"
+                    locale="en"
+                    onDateChange={(value) => setDate(value)}
+                />
+                <></>
+            </GenericDialog>
+        </>
+    );
 };
 
 export default InputPanel;
