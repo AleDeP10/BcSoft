@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   ScrollView,
   View,
@@ -7,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 
-import {submitRequest, pad, shallowClone} from './commons';
+import {shallowClone} from './commons';
 import {showStars} from './HotelsPanel';
 
 import styles from './styles';
@@ -65,11 +66,9 @@ const DetailsPanel = (props) => {
     };
   
     const toggleSectionVisibility = (heading) => {
-      console.log(heading + ' => ' + props.sectionsVisibility[heading]);
       let clone = shallowClone(props.sectionsVisibility);
       clone[heading] = !clone[heading];
       props.setSectionsVisibility(clone);
-      console.log('toggled visibility: '+JSON.stringify(clone));
     }
   
     const renderAmenity = (amenity) => {
@@ -78,6 +77,8 @@ const DetailsPanel = (props) => {
       );
     };
   
+
+
     let hotel = props.selectedHotel;
     return (
       props.step == 3 && props.hotelDetails != null ?

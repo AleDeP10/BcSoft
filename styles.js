@@ -51,7 +51,7 @@ export default styles = StyleSheet.create({
     row: {
       flexDirection: 'row',
       alignContent: 'center',
-      paddingBottom: 10,
+      paddingTop: 10,
     },
     left: {
       minWidth: 120
@@ -78,18 +78,11 @@ export default styles = StyleSheet.create({
       backgroundColor: '#ffffff', minWidth: '100%',
       padding: 10
     },
-    item: {
-      padding: 10,
-      marginVertical: 10,
-      width: '100%',
-      textDecorationLine: 'underline',
-      fontStyle: 'italic'
-    },
     separator: {
       flex: 1,
       height: 1,//StyleSheet.hairlineWidth,
       backgroundColor: '#CECECE',
-      marginVertical: 5
+      marginTop: 5
     },
   
   

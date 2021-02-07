@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
     ScrollView,
     View,
@@ -12,6 +13,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
 
 import GenericDialog from './GenericDialog';
+
 import { submitRequest } from './commons';
 import styles from './styles';
 
@@ -32,6 +34,8 @@ const InputPanel = (props) => {
         inputError, setInputError
     ] = useState('');
 
+
+
     const searchLocality = (value) => {
         let encLocality = encodeURIComponent(value);
         props.setSelectedCity(null);
@@ -45,16 +49,15 @@ const InputPanel = (props) => {
     };
 
     const displayLocalities = (data) => {
-        console.log(JSON.stringify(data));
-        let array = [];
-        data.suggestions[0].entities.map(city => array.push({ label: city.name, value: city.destinationId }));
-
-        console.log('cities: ' + JSON.stringify(array));
-        props.setCities(array);
+        let cities = [];
+        data.suggestions[0].entities.map(city => cities.push({ label: city.name, value: city.destinationId }));
+        cities.sort((city1, city2) => city1.label<city2.label?-1:1);
+        props.setCities(cities);
     };
 
+
+
     const renderCityDropDown = () => {
-        console.log(JSON.stringify(props.selectedCity));
         if (props.cities != null) {
             return (
                 <>
@@ -69,16 +72,17 @@ const InputPanel = (props) => {
                         selectedLabelStyle={{ color: '#39739d' }}
                         itemStyle={{ justifyContent: 'flex-start' }}
                         dropDownStyle={{ backgroundColor: '#ffffff' }}
-                        onChangeItem={item => props.setSelectedCity(item)}
+                        onChangeItem={city => props.setSelectedCity(city)}
                     />
                 </>
             );
         }
     };
 
+
+
     const setIntProperty = (text, originalValue, setTargetValue, setStringValue) => {
         let number = parseInt(text);
-        console.log(number);
         if (Object.is(number, NaN)) {
             setStringValue('' + originalValue);
             setInputError('Expected an integer value');
@@ -88,6 +92,8 @@ const InputPanel = (props) => {
             setStringValue('' + number);
         }
     }
+
+
 
     return (
         props.step == 1 ?
@@ -107,7 +113,7 @@ const InputPanel = (props) => {
                             onChangeText={text => props.setDestination(text)}
                             onSubmitEditing={(event) => searchLocality(event.nativeEvent.text)}
                         />
-                        {renderCityDropDown()}
+                        { renderCityDropDown() }
                     </View>
                 </View>
 
@@ -188,6 +194,7 @@ const DateInput = (props) => {
     ] = useState(false);
     return (
         <>
+            {/* Disabled textfield with activation button */}
             <View style={{ flexDirection: 'row', alignContent: 'center' }}>
                 <TextInput 
                     style={[styles.input, { width: 220, height: 40 }]}
@@ -201,6 +208,8 @@ const DateInput = (props) => {
                     />
                 </TouchableHighlight>
             </View>
+
+            {/* Popup for the date selection */}
             <GenericDialog
                 title='Choose a date'
                 showDialog={showDialog}
